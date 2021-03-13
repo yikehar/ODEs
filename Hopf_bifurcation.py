@@ -8,14 +8,14 @@ from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 
 # Constants. a, b > 0
-a_const = 2.4
-b_const = 1.8
+a_const = 0.125
+b_const = 0.6124
 
 #Initial values
 xy0 = [0.1, 0.8]
 
 #Time points
-t = np.linspace(0, 40, 401)
+t = np.linspace(0, 80, 801)
 
 def selkov_model(xy, t, a, b):
     #ADP(x), F6P(y)
@@ -31,27 +31,29 @@ def stability(a, x, y):
     """
     Jacobian of the Sel'kov model
     J = [[-1 + 2*x*y, a + x**2],
-        [2*x*y,      -a - x**2]]
+        [-2*x*y,      -a - x**2]]
     """
-    J = np.array([[-1 + 2*x*y, a + pow(x, 2)], [2*x*y, -a - pow(x, 2)]])
+    J = np.array([[-1 + 2*x*y, a + pow(x, 2)], [-2*x*y, -a - pow(x, 2)]])
     detJ = np.linalg.det(J)
     trJ = np.trace(J)
     D_J = pow(trJ, 2) - 4 * detJ
+    print('(D, det, tr) = (%.2f, %.2f, %.2f)' % (D_J, detJ, trJ))
     if D_J < 0:  # When eigen values are complex numbers
         if trJ == 0:  # When all eigen values are pure imaginary numbers
-            print('The fixed point (%.1f, %.1f) is a center.' % (x, y))
+            FP_class = 'a center'
         elif trJ < 0:  # When real parts of the eigen values are all negative
-            print('The fixed point (%.1f, %.1f) is a stable spiral.' % (x, y))
-        else:
-            print('The fixed point (%.1f, %.1f) is an unstable spiral.' % (x, y))
+            FP_class = 'a stable spiral'
+        else:           # When real parts of the eigen values are all positive
+            FP_class = 'an unstable spiral'
     else:  # When eigen values are real numbers
         if detJ < 0:  # When J has both positive and negative eigen values
-            print('The fixed point (%.1f, %.1f) is a saddle.' % (x, y))
-        elif trJ < 0:  # When all eigen values are negative
-            print('The fixed point (%.1f, %.1f) is a stable node.' % (x, y))
-        else:
-            print('The fixed point (%.1f, %.1f) is an unstable node.' % (x, y))
-    return 0
+            FP_class = 'a saddle'
+        elif trJ > 0:  # When all eigen values are positive
+            FP_class = 'an unstable node'
+        else:           # When all eigen values are negative or zero
+            FP_class = 'a stable node'
+    print('The fixed point (%.2f, %.2f) is %s.' % (x, y, FP_class))
+    return detJ, trJ, D_J
 
 """
 At a fixed point the following system of equations hold:
@@ -78,12 +80,12 @@ plt.plot(t, xy[:, 1], 'b-', linewidth=2, label='F6P (y)')
 plt.xlabel('Time')
 plt.ylabel('x, y')
 plt.legend(loc='upper left')
-plt.title("Sel'kov Model: (a, b) = (%.1f, %.1f)" % (a_const, b_const))
+plt.title("Sel'kov Model: (a, b) = (%.2f, %.2f)" % (a_const, b_const))
 
 #Plot y vs x
 plt.figure(2)
 plt.plot(xy[:, 0], xy[:, 1], 'g--', linewidth=2, label='Solutions')
-meshsize = 61
+meshsize = 21
 xmax = max(x_fp,max(xy[:,0]))
 ymax = max(y_fp,max(xy[:,1]))
 xx, yy = np.meshgrid(np.linspace(0, xmax + 0.2, meshsize), np.linspace(0, ymax + 0.2, meshsize))
@@ -94,10 +96,17 @@ plt.contour(xx, yy, xx_dot, levels=[0], colors="b")
 plt.contour(xx, yy, yy_dot, levels=[0], colors="r")
 plt.xlim([0.0, xmax + 0.2])
 plt.ylim([0.0, ymax + 0.2])
-plt.plot(x_fp,y_fp, color='magenta', marker='.', markersize=16, linestyle='none', label="Fixed points")
+plt.plot(x_fp,y_fp, color='magenta', marker='.', markersize=16, linestyle='none', label="Fixed point")
 plt.grid()
 plt.title("Nullclines: Blue, dx/dt = 0; Red, dy/dt = 0")
 plt.xlabel('ADP (x)')
 plt.ylabel('F6P (y)')
 plt.legend(loc='upper left')
+
+#Plot b vs a
+#plt.figure(3)
+#aa, bb = np.meshgrid(np.linspace(0,5,6), np.linspace(0,5,6))
+#det_grid
+#tr_grid
+#D_grid
 plt.show()

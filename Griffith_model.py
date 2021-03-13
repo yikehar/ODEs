@@ -37,21 +37,21 @@ def stability(a, b, x, y):
     detJ = np.linalg.det(J)
     trJ = np.trace(J)
     D_J = pow(trJ, 2) - 4 * detJ
-    if D_J < 0: #When eigen values are complex numbers
-        if trJ == 0:    #When all eigen values are pure imaginary numbers
-            print('The fixed point (%.1f, %.1f) is a center.' % (x, y))
-        elif trJ < 0:   #When real parts of the eigen values are all negative
-            print('The fixed point (%.1f, %.1f) is a stable spiral.' % (x, y))
-        else:
-            print('The fixed point (%.1f, %.1f) is an unstable spiral.' % (x, y))
-    else:   #When eigen values are real numbers
-        if detJ < 0:    #When J has both positive and negative eigen values
-            print('The fixed point (%.1f, %.1f) is a saddle.' % (x, y))
-        elif trJ < 0:   #When all eigen values are negative
-            print('The fixed point (%.1f, %.1f) is a stable node.' % (x, y))
-        else:
-            print('The fixed point (%.1f, %.1f) is an unstable node.' % (x, y))
-    return 0
+    if D_J < 0:  # When eigen values are complex numbers
+        if trJ == 0:  # When all eigen values are pure imaginary numbers
+            FP_class = 'a center'
+        elif trJ < 0:  # When real parts of the eigen values are all negative
+            FP_class = 'a stable spiral'
+        else:           # When real parts of the eigen values are all positive
+            FP_class = 'an unstable spiral'
+    else:  # When eigen values are real numbers
+        if detJ < 0:  # When J has both positive and negative eigen values
+            FP_class = 'a saddle'
+        elif trJ > 0:  # When all eigen values are positive
+            FP_class = 'an unstable node'
+        else:  # When all eigen values are negative or zero
+            FP_class = 'a stable node'
+    print('The fixed point (%.2f, %.2f) is %s.' % (x, y, FP_class))
 
 """
 At a fixed point the following system of equations hold:
