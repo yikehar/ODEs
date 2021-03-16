@@ -8,8 +8,8 @@ from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 
 # Constants. a, b > 0
-a_const = 1.2
-b_const = 1.4
+a_const = 0.005
+b_const = 0.3
 
 #Initial values
 xy0 = [0.1, 0.8]
@@ -74,7 +74,7 @@ def FixedPoint(a, b):
     return x, y
 x_fp, y_fp = FixedPoint(a_const, b_const)
 st = stability(a_const, x_fp, y_fp)
-print('(D, det, tr) = (%.2f, %.2f, %.2f)' % st)
+print('(det, tr, D) = (%.2f, %.2f, %.2f)' % st)
 
 #Solve ODEs
 xy = odeint(selkov_model, xy0, t, args=(a_const, b_const,))
@@ -110,7 +110,6 @@ plt.ylabel('F6P (y)')
 plt.legend(loc='upper left')
 
 #Plot b vs a
-plt.figure(3)
 amin = 0.0
 amax = 2.5
 adivs = 81
@@ -129,8 +128,18 @@ for m in range(0, aa.shape[0]):
         tr_grid[m,n] = tr_temp
         D_grid[m,n] = D_temp
         print(det_grid[m,n],tr_grid[m,n],D_grid[m,n])
+plt.figure(3)
+contf_D = plt.contourf(aa, bb, D_grid, 20, cmap='hsv')
+CB_D = plt.colorbar(contf_D)
+CB_D.set_label('D = tr2(J) - 4det(J)')
+contf_tr = plt.contourf(aa, bb, tr_grid, 20, hatches=['-', '/', '\\', 'o'],cmap='gray',alpha=0.3)
+CB_tr = plt.colorbar(contf_tr)
+CB_tr.set_label('tr(J)')
 plt.contour(aa, bb, tr_grid, levels=[0], colors="r")
 plt.contour(aa, bb, D_grid, levels=[0], colors="b")
+plt.contour(aa, bb, det_grid, levels=[0], colors="y")
 plt.xlabel('a')
 plt.ylabel('b')
+plt.title("Lines: Blue, D = 0; Red, tr(J) = 0")
+
 plt.show()
