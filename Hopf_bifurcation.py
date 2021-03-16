@@ -8,8 +8,8 @@ from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 
 # Constants. a, b > 0
-a_const = 0.125
-b_const = 0.6124
+a_const = 1.2
+b_const = 1.4
 
 #Initial values
 xy0 = [0.1, 0.8]
@@ -33,18 +33,18 @@ def stability(a, x, y):
     J = [[-1 + 2*x*y, a + x**2],
         [-2*x*y,      -a - x**2]]
     """
-    J = np.array([[-1 + 2*x*y, a + pow(x, 2)], [-2*x*y, -a - pow(x, 2)]])
+    J = np.array([[-1 + 2*x*y, a + pow(x, 2)],
+                  [-2*x*y, -a - pow(x, 2)]])
     detJ = np.linalg.det(J)
     trJ = np.trace(J)
     D_J = pow(trJ, 2) - 4 * detJ
-    print('(D, det, tr) = (%.2f, %.2f, %.2f)' % (D_J, detJ, trJ))
     if D_J < 0:  # When eigen values are complex numbers
-        if trJ == 0:  # When all eigen values are pure imaginary numbers
-            FP_class = 'a center'
+        if trJ > 0:  # When real parts of the eigen values are all positive
+            FP_class = 'an unstable spiral'
         elif trJ < 0:  # When real parts of the eigen values are all negative
             FP_class = 'a stable spiral'
-        else:           # When real parts of the eigen values are all positive
-            FP_class = 'an unstable spiral'
+        else:  # When all eigen values are pure imaginary numbers
+            FP_class = 'a center'
     else:  # When eigen values are real numbers
         if detJ < 0:  # When J has both positive and negative eigen values
             FP_class = 'a saddle'
@@ -62,13 +62,19 @@ At a fixed point the following system of equations hold:
 Solution:
     (x, y) = (b, b/(a + b**2))
 """
-#Determine a fixed point
+#Determine the fixed point
 def FixedPoint(a, b):
-    x = b
-    y = b / (a + pow(b, 2))
+    #When divided by zero
+    if pow(a, 2) + pow(b, 2) == 0:
+        x = 0.0
+        y = 0.0
+    else:
+        x = b
+        y = b / (a + pow(b, 2))
     return x, y
 x_fp, y_fp = FixedPoint(a_const, b_const)
 st = stability(a_const, x_fp, y_fp)
+print('(D, det, tr) = (%.2f, %.2f, %.2f)' % st)
 
 #Solve ODEs
 xy = odeint(selkov_model, xy0, t, args=(a_const, b_const,))
@@ -104,9 +110,27 @@ plt.ylabel('F6P (y)')
 plt.legend(loc='upper left')
 
 #Plot b vs a
-#plt.figure(3)
-#aa, bb = np.meshgrid(np.linspace(0,5,6), np.linspace(0,5,6))
-#det_grid
-#tr_grid
-#D_grid
+plt.figure(3)
+amin = 0.0
+amax = 2.5
+adivs = 81
+bmin = 0.0
+bmax = 2.5
+bdivs = 81
+aa, bb = np.meshgrid(np.linspace(amin, amax, adivs), np.linspace(bmin, bmax, bdivs))
+det_grid = np.zeros(aa.shape)
+tr_grid = np.zeros(aa.shape)
+D_grid = np.zeros(aa.shape)
+for m in range(0, aa.shape[0]):
+    for n in range(0, aa.shape[1]):
+        xfp, yfp = FixedPoint(aa[m,n], bb[m,n])
+        det_temp, tr_temp, D_temp = stability(aa[m,n], xfp, yfp)
+        det_grid[m,n] = det_temp
+        tr_grid[m,n] = tr_temp
+        D_grid[m,n] = D_temp
+        print(det_grid[m,n],tr_grid[m,n],D_grid[m,n])
+plt.contour(aa, bb, tr_grid, levels=[0], colors="r")
+plt.contour(aa, bb, D_grid, levels=[0], colors="b")
+plt.xlabel('a')
+plt.ylabel('b')
 plt.show()

@@ -33,17 +33,18 @@ def stability(a, b, x, y):
     J = [[-a,                1],
         [2*x/(1 + x**2)**2, -b]]
     """
-    J = np.array([[-a, 1], [2 * x / pow(1 + pow(x, 2), 2), -b]])
+    J = np.array([[-a, 1],
+                  [2 * x / pow(1 + pow(x, 2), 2), -b]])
     detJ = np.linalg.det(J)
     trJ = np.trace(J)
     D_J = pow(trJ, 2) - 4 * detJ
     if D_J < 0:  # When eigen values are complex numbers
-        if trJ == 0:  # When all eigen values are pure imaginary numbers
-            FP_class = 'a center'
-        elif trJ < 0:  # When real parts of the eigen values are all negative
-            FP_class = 'a stable spiral'
-        else:           # When real parts of the eigen values are all positive
+        if trJ > 0:     # When real parts of the eigen values are all positive
             FP_class = 'an unstable spiral'
+        elif trJ < 0:   # When real parts of the eigen values are all negative
+            FP_class = 'a stable spiral'
+        else:           # When all eigen values are pure imaginary numbers
+            FP_class = 'a center'
     else:  # When eigen values are real numbers
         if detJ < 0:  # When J has both positive and negative eigen values
             FP_class = 'a saddle'
