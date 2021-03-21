@@ -8,11 +8,11 @@ from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 
 # Constants. a, b > 0
-a_const = 0.005
+a_const = 0.01
 b_const = 0.3
 
 #Initial values
-xy0 = [0.1, 0.8]
+xy0 = [0.4, 0.1]
 
 #Time points
 t = np.linspace(0, 80, 801)
@@ -33,23 +33,31 @@ def stability(a, x, y):
     J = [[-1 + 2*x*y, a + x**2],
         [-2*x*y,      -a - x**2]]
     """
-    J = np.array([[-1 + 2*x*y, a + pow(x, 2)],
-                  [-2*x*y, -a - pow(x, 2)]])
+    J = np.array([[-1.0 + 2.0*x*y, a + pow(x, 2.0)],
+                  [-2.0*x*y, -a - pow(x, 2.0)]])
     detJ = np.linalg.det(J)
     trJ = np.trace(J)
-    D_J = pow(trJ, 2) - 4 * detJ
-    if D_J < 0:  # When eigen values are complex numbers
-        if trJ > 0:  # When real parts of the eigen values are all positive
+    D_J = pow(trJ, 2.0) - 4.0 * detJ
+    if D_J < 0.0:  # When eigen values are complex numbers
+        if trJ > 0.0:  # When real parts of the eigen values are all positive
             FP_class = 'an unstable spiral'
-        elif trJ < 0:  # When real parts of the eigen values are all negative
+        elif trJ < 0.0:  # When real parts of the eigen values are all negative
             FP_class = 'a stable spiral'
         else:  # When all eigen values are pure imaginary numbers
             FP_class = 'a center'
-    else:  # When eigen values are real numbers
-        if detJ < 0:  # When J has both positive and negative eigen values
-            FP_class = 'a saddle'
-        elif trJ > 0:  # When all eigen values are positive
+    elif D_J == 0.0:
+        if trJ > 0.0:
             FP_class = 'an unstable node'
+        else:
+            FP_class = 'a stable node'
+    else:  # When eigen values are real numbers
+        if detJ < 0.0:  # When J has both positive and negative eigen values
+            FP_class = 'a saddle'
+        elif trJ > 0.0:  # When all eigen values are positive or zero
+            if detJ == 0.0:  # When an eigen value is zero
+                FP_class = 'a saddle'
+            else:
+                FP_class = 'an unstable node'
         else:           # When all eigen values are negative or zero
             FP_class = 'a stable node'
     print('The fixed point (%.2f, %.2f) is %s.' % (x, y, FP_class))
@@ -129,10 +137,10 @@ for m in range(0, aa.shape[0]):
         D_grid[m,n] = D_temp
         print(det_grid[m,n],tr_grid[m,n],D_grid[m,n])
 plt.figure(3)
-contf_D = plt.contourf(aa, bb, D_grid, 20, cmap='hsv')
+contf_D = plt.contourf(aa, bb, D_grid, 4, cmap='hsv')
 CB_D = plt.colorbar(contf_D)
 CB_D.set_label('D = tr2(J) - 4det(J)')
-contf_tr = plt.contourf(aa, bb, tr_grid, 20, hatches=['-', '/', '\\', 'o'],cmap='gray',alpha=0.3)
+contf_tr = plt.contourf(aa, bb, tr_grid, 4, hatches=['\\', 'o', '/', '-'],cmap='gray',alpha=0.3)
 CB_tr = plt.colorbar(contf_tr)
 CB_tr.set_label('tr(J)')
 plt.contour(aa, bb, tr_grid, levels=[0], colors="r")

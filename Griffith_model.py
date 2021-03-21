@@ -8,8 +8,8 @@ from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 
 # Constants. a, b > 0
-a_const = 0.8
-b_const = 0.3
+a_const = 1.2
+b_const = 1.6
 
 #Initial values
 xy0 = [0.01, 0.8]
@@ -33,26 +33,35 @@ def stability(a, b, x, y):
     J = [[-a,                1],
         [2*x/(1 + x**2)**2, -b]]
     """
-    J = np.array([[-a, 1],
-                  [2 * x / pow(1 + pow(x, 2), 2), -b]])
+    J = np.array([[-a, 1.0],
+                  [2.0 * x / pow(1.0 + pow(x, 2.0), 2.0), -b]])
     detJ = np.linalg.det(J)
     trJ = np.trace(J)
-    D_J = pow(trJ, 2) - 4 * detJ
+    D_J = pow(trJ, 2.0) - 4.0 * detJ
     if D_J < 0:  # When eigen values are complex numbers
-        if trJ > 0:     # When real parts of the eigen values are all positive
+        if trJ > 0:  # When real parts of the eigen values are all positive
             FP_class = 'an unstable spiral'
-        elif trJ < 0:   # When real parts of the eigen values are all negative
+        elif trJ < 0:  # When real parts of the eigen values are all negative
             FP_class = 'a stable spiral'
-        else:           # When all eigen values are pure imaginary numbers
+        else:  # When all eigen values are pure imaginary numbers
             FP_class = 'a center'
+    elif D_J == 0:
+        if trJ > 0:
+            FP_class = 'an unstable node'
+        else:
+            FP_class = 'a stable node'
     else:  # When eigen values are real numbers
         if detJ < 0:  # When J has both positive and negative eigen values
             FP_class = 'a saddle'
-        elif trJ > 0:  # When all eigen values are positive
-            FP_class = 'an unstable node'
-        else:  # When all eigen values are negative or zero
+        elif trJ > 0:  # When all eigen values are positive or zero
+            if detJ == 0:  # When an eigen value is zero
+                FP_class = 'a saddle'
+            else:
+                FP_class = 'an unstable node'
+        else:           # When all eigen values are negative or zero
             FP_class = 'a stable node'
     print('The fixed point (%.2f, %.2f) is %s.' % (x, y, FP_class))
+    return detJ, trJ, D_J
 
 """
 At a fixed point the following system of equations hold:
@@ -64,26 +73,26 @@ Eliminating y gives:
 #Determine fixed points
 def FPs(a, b):
     # Quadratic formula at the fixed points: x = (1 +/- sqrt(1-4*a^2*b^2))/(2*a*b)
-    D = 1.0 - 4*pow(a,2)*pow(b,2)   #Discriminant
-    if D > 0:
+    D = 1.0 - 4.0*pow(a,2.0)*pow(b,2.0)   #Discriminant
+    if D > 0.0:
         numFPs = 3
         x1 = 0.0
         x2 = (1 - np.sqrt(D)) / (2 * a * b)
         x3 = (1 + np.sqrt(D)) / (2 * a * b)
         x = np.array([x1, x2, x3])
-    elif D < 0:
+    elif D < 0.0:
         numFPs = 1
         x = np.array([0.0])
     else:
         numFPs = 2
         x1 = 0.0
-        x2 = 1 / (2*a*b)
+        x2 = 1.0 / (2.0*a*b)
         x = np.array([x1, x2])
     y = np.multiply(x, a)
     return x, y, numFPs
 
 #Solve ODEs
-xy = odeint(griffith_model, xy0, t, args=(a_const, b_const,))
+xy_sol = odeint(griffith_model, xy0, t, args=(a_const, b_const,))
 
 #Fixed points
 x_fp, y_fp, num_fp = FPs(a_const, b_const)
@@ -93,8 +102,8 @@ for num in range(0, num_fp):
 
 #Plot x, y vs time
 plt.figure(1)
-plt.plot(t, xy[:, 0], 'r-', linewidth=2, label='Protein (x)')
-plt.plot(t, xy[:, 1], 'b-', linewidth=2, label='mRNA (y)')
+plt.plot(t, xy_sol[:, 0], 'r-', linewidth=2, label='Protein (x)')
+plt.plot(t, xy_sol[:, 1], 'b-', linewidth=2, label='mRNA (y)')
 plt.xlabel('Time')
 plt.ylabel('x, y')
 plt.legend(loc='upper left')
@@ -102,10 +111,10 @@ plt.title("Griffith Model: (a, b) = (%.1f, %.1f)" % (a_const, b_const))
 
 #Plot y vs x
 plt.figure(2)
-plt.plot(xy[:, 0], xy[:, 1], 'g--', linewidth=2, label='Solutions')
-meshsize = 101
-xmax = max(max(x_fp),max(xy[:,0]))
-ymax = max(max(y_fp),max(xy[:,1]))
+plt.plot(xy_sol[:, 0], xy_sol[:, 1], 'g--', linewidth=2, label='Solutions')
+meshsize = 31
+xmax = max(max(x_fp),max(xy_sol[:,0]))
+ymax = max(max(y_fp),max(xy_sol[:,1]))
 xx, yy = np.meshgrid(np.linspace(0, xmax + 0.2, meshsize), np.linspace(0, ymax + 0.2, meshsize))
 xx_dot = -a_const * xx + yy
 yy_dot = pow(xx,2) / (np.ones(xx.shape) + pow(xx, 2)) -b_const * yy

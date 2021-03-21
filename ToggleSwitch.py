@@ -9,7 +9,7 @@ from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 
 # Constant. a > 0
-a_const = 2.0
+a_const = 1.0
 
 #Initial values
 xy0 = [1.24, 1.26]
@@ -33,23 +33,31 @@ def stability(a, x, y):
     J = [[-1,                   -2ay / (1 + y**2)**2],
         [-2ax / (1 + x**2)**2,  -1]]
     """
-    J = np.array([[-1, -2*a*y / pow(1 + pow(y, 2), 2)],
-                  [-2*a*x / pow(1 + pow(x, 2), 2), -1]])
+    J = np.array([[-1.0, -2.0*a*y / pow(1.0 + pow(y, 2.0), 2.0)],
+                  [-2.0*a*x / pow(1.0 + pow(x, 2.0), 2.0), -1.0]])
     detJ = np.linalg.det(J)
     trJ = np.trace(J)
-    D_J = pow(trJ, 2) - 4 * detJ
-    if D_J < 0:  # When eigen values are complex numbers
-        if trJ > 0:  # When real parts of the eigen values are all positive
+    D_J = pow(trJ, 2.0) - 4.0 * detJ
+    if D_J < 0.0:  # When eigen values are complex numbers
+        if trJ > 0.0:  # When real parts of the eigen values are all positive
             FP_class = 'an unstable spiral'
-        elif trJ < 0:  # When real parts of the eigen values are all negative
+        elif trJ < 0.0:  # When real parts of the eigen values are all negative
             FP_class = 'a stable spiral'
         else:  # When all eigen values are pure imaginary numbers
             FP_class = 'a center'
-    else:  # When eigen values are real numbers
-        if detJ < 0:  # When J has both positive and negative eigen values
-            FP_class = 'a saddle'
-        elif trJ > 0:  # When all eigen values are positive
+    elif D_J == 0.0:
+        if trJ > 0.0:
             FP_class = 'an unstable node'
+        else:
+            FP_class = 'a stable node'
+    else:  # When eigen values are real numbers
+        if detJ < 0.0:  # When J has both positive and negative eigen values
+            FP_class = 'a saddle'
+        elif trJ > 0.0:  # When all eigen values are positive or zero
+            if detJ == 0.0:  # When an eigen value is zero
+                FP_class = 'a saddle'
+            else:
+                FP_class = 'an unstable node'
         else:           # When all eigen values are negative or zero
             FP_class = 'a stable node'
     print('The fixed point (%.2f, %.2f) is %s.' % (x, y, FP_class))
@@ -91,12 +99,12 @@ for k in range(len(x_fp)):
     print('(det, tr, D) = (%.2f, %.2f, %.2f)' % st)
 
 #Solve ODEs
-xy = odeint(toggle_switch, xy0, t, args=(a_const,))
+xy_sol = odeint(toggle_switch, xy0, t, args=(a_const,))
 
 #Plot x, y vs time
 plt.figure(1)
-plt.plot(t, xy[:, 0], 'r-', linewidth=2, label='LacI (x)')
-plt.plot(t, xy[:, 1], 'b-', linewidth=2, label='lambda CI (y)')
+plt.plot(t, xy_sol[:, 0], 'r-', linewidth=2, label='LacI (x)')
+plt.plot(t, xy_sol[:, 1], 'b-', linewidth=2, label='lambda CI (y)')
 plt.xlabel('Time')
 plt.ylabel('x, y')
 plt.legend(loc='upper left')
@@ -104,10 +112,10 @@ plt.title("Toggle switch: a = %.2f" % (a_const))
 
 #Plot y vs x
 plt.figure(2)
-plt.plot(xy[:, 0], xy[:, 1], 'g--', linewidth=2, label='Solutions')
+plt.plot(xy_sol[:, 0], xy_sol[:, 1], 'g--', linewidth=2, label='Solutions')
 meshsize = 21
-xmax = max(max(x_fp),max(xy[:,0]))
-ymax = max(max(y_fp),max(xy[:,1]))
+xmax = max(max(x_fp),max(xy_sol[:,0]))
+ymax = max(max(y_fp),max(xy_sol[:,1]))
 xx, yy = np.meshgrid(np.linspace(0, xmax + 0.2, meshsize), np.linspace(0, ymax + 0.2, meshsize))
 xx_dot = a_const*np.ones(xx.shape) / (np.ones(xx.shape) + np.power(yy, 2)) -xx
 yy_dot = a_const*np.ones(xx.shape) / (np.ones(xx.shape) + np.power(xx, 2)) -yy
