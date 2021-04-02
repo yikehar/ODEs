@@ -9,10 +9,10 @@ from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 
 # Constant. a > 0
-a_const = 1.0
+a_const = 3.0
 
 #Initial values
-xy0 = [1.24, 1.26]
+xy0 = [1.25, 1.25]
 
 #Time points
 t = np.linspace(0, 80, 801)

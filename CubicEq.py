@@ -16,6 +16,9 @@ def cubic(a, b, c):         #Cubic formula
         th = np.arctan(np.sqrt(-D_4)/(-q/2))
         u = pow(r, 1/3)*np.exp(1.0j*th/3.0)
         v = -p / u / 3.0
+        y = np.array([u + v, (u + v * w) * w, (u * w + v) * w])
+        x = y - y0 * np.ones(y.shape)
+        x = x.real
     else:
         u_3 = -q / 2.0 + np.sqrt(D_4)
         if u_3 < 0.0:
@@ -27,8 +30,8 @@ def cubic(a, b, c):         #Cubic formula
         else:
             u = 0.0
             v = 0.0
-    y = np.array([u + v, (u + v*w)*w, (u*w + v)*w])
-    x = y - y0*np.ones(y.shape)
+        y = np.array([u + v, (u + v*w)*w, (u*w + v)*w])
+        x = y - y0*np.ones(y.shape)
     return x
 x_cal = cubic(a0, b0, c0)
 print(x_cal)
