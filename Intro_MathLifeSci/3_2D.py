@@ -33,8 +33,7 @@ for T in range(int(Tmax1) - 1):
     E[T + 1] = (p - k*E[T])*dT + E[T]
 
 #Sampled elements in E are stored in E1
-for T2 in range(int(Tmax2)):
-    E1[T2] = E[int(T2 / dT)]
+E1 = E[::int(1/dT)]
 
 #Init. arrays for numerical sol.
 time2 = np.linspace(0, int(Tmax2), int(Tmax2))
