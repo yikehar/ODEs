@@ -32,7 +32,7 @@ E1 = np.zeros(int(Tmax2))
 for T in range(int(Tmax1) - 1):
     E[T + 1] = (p - k*E[T])*dT + E[T]
 
-#Sampled elements in E are stored in E1
+#Pick up elements with a step 1/dt
 E1 = E[::int(1/dT)]
 
 #Init. arrays for numerical sol.
