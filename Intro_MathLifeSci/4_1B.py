@@ -20,6 +20,8 @@ When d is any real number which is > 0,
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import os
+from PIL import Image
 
 #init.
 Xmax, Tmax = 100, 100
@@ -78,16 +80,9 @@ for time in range(Tmax):
     heatmap = ax.pcolor(E[:, :, time], vmin=0.0, vmax=1.0, cmap='YlOrRd')
     fig.colorbar(heatmap, ax=ax)
     s = str(time).zfill(len_T)
-    fig.savefig(s+'.png')   #Save image for each loop
+    fig.savefig("GIF\\{}.png".format(s))   #Save image for each loop
 
-
-"""
-#ANIMATION
-#UNDER CONSTRUCTION
-for time in range(Tmax):
-    def plot(data, time):
-        data = E[:, :, time]
-        heatmap = ax.pcolor(data)
-    ani = animation.FuncAnimation(fig, plot, interval=100)
-    plt.show()
-"""
+path = os.getcwd() + "\\GIF\\"
+files = [path + str(t).zfill(len_T) + '.png' for t in range(Tmax)]
+images = list(map(lambda file: Image.open(file), files))
+images.pop(0).save(path + "heatmap.gif" ,save_all = True, append_images = images, duration = 100, optimize = False, loop = 0)
