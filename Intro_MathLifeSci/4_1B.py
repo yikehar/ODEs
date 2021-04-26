@@ -1,5 +1,5 @@
 """
-4.1A
+4.1B
 Diffusion across neighboring cells
 [    ][E1,2][    ]
 [E0,1][E1,1][E2,1]
@@ -19,15 +19,17 @@ When d is any real number which is > 0,
 """
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
 import os
 from PIL import Image
+import time
 
 #init.
 Xmax, Tmax = 100, 100
 dt, d, dx = 0.1, 1.0, 1.0
 E = np.zeros((Xmax, Xmax, Tmax))
 E[40:60, 40:60, 0] = 1.0    #Initial conc. distribution
+
+starttime = time.time() #start timing
 
 #Calc. conc. E(x, y, t)
 for T in range(Tmax - 1):
@@ -73,6 +75,9 @@ for T in range(Tmax - 1):
     X, Y = Xmax - 1, Xmax - 1
     E[X, Y, T + 1] = dt * (d * (E[Y, X - 1, T] + E[Y - 1, X, T] - 2 * E[X, Y, T])) / dx/dx + E[X, Y, T]
 
+elapsedtime = time.time() - starttime
+print('Time elapsed (sec): {}'.format(elapsedtime))
+
 #Plot results
 len_T = len(str(Tmax))  #the number of digits in Tmax
 for time in range(Tmax):
@@ -85,4 +90,4 @@ for time in range(Tmax):
 path = os.getcwd() + "\\GIF\\"
 files = [path + str(t).zfill(len_T) + '.png' for t in range(Tmax)]
 images = list(map(lambda file: Image.open(file), files))
-images.pop(0).save(path + "heatmap.gif" ,save_all = True, append_images = images, duration = 100, optimize = False, loop = 0)
+images.pop(0).save(path + "4_1B.gif" ,save_all = True, append_images = images, duration = 100, optimize = False, loop = 0)

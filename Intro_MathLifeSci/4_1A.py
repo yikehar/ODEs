@@ -19,7 +19,6 @@ When d is any real number which is > 0,
 """
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
 import os
 from PIL import Image
 
@@ -50,5 +49,5 @@ for time in range(Tmax):
 path = os.getcwd() + "\\GIF\\"
 files = [path + str(t).zfill(len_T) + '.png' for t in range(Tmax)]
 images = list(map(lambda file: Image.open(file), files))
-images.pop(0).save(path + "heatmap.gif" ,save_all = True, append_images = images, duration = 100, optimize = False, loop = 0)
+images.pop(0).save(path + "4_1A.gif" ,save_all = True, append_images = images, duration = 100, optimize = False, loop = 0)
 
