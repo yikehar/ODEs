@@ -86,6 +86,8 @@ for time in range(Tmax):
     fig.colorbar(heatmap, ax=ax)
     s = str(time).zfill(len_T)
     fig.savefig("GIF\\{}.png".format(s))   #Save image for each loop
+    plt.clf()
+    plt.close()
 
 path = os.getcwd() + "\\GIF\\"
 files = [path + str(t).zfill(len_T) + '.png' for t in range(Tmax)]
