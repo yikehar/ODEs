@@ -87,6 +87,7 @@ for time in range(Tmax):
     s = str(time).zfill(len_T)
     fig.savefig("GIF\\{}.png".format(s))   #Save image for each loop
     plt.clf()
+    plt.cla()
     plt.close()
 
 path = os.getcwd() + "\\GIF\\"

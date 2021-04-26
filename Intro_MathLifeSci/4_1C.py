@@ -1,5 +1,5 @@
 """
-4.1A
+4.1C
 Diffusion across neighboring cells
 [    ][E1,2][    ]
 [E0,1][E1,1][E2,1]
@@ -21,6 +21,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 from PIL import Image
+import time
+import discreteLaplacian
 
 #init.
 Xmax, Tmax = 100, 100
@@ -28,14 +30,13 @@ dt, d, dx = 0.1, 1.0, 1.0
 E = np.zeros((Xmax, Xmax, Tmax))
 E[40:60, 40:60, 0] = 1.0    #Initial conc. distribution
 
-#Calc. conc. E(x, y, t)
-#Do not calc. at the boundaries
+starttime = time.time() #start timing
+
 for T in range(Tmax - 1):
-    for X in range(1, Xmax - 2):
-        for Y in range(1, Xmax - 2):
-            E[X, Y, T + 1] = \
-            dt * (d * (E[Y, X - 1, T] + E[Y, X + 1, T] + E[Y -1, X, T] + E[Y + 1, X, T] \
-            - 4 * E[X, Y, T])) / dx/dx + E[X, Y, T]
+    E[:, :, T + 1] = 4. * dt * d * discreteLaplacian.Lap2D(E[:, :, T], dx) + E[:, :, T]
+
+elapsedtime = time.time() - starttime
+print('Time elapsed (sec): {}'.format(elapsedtime))
 
 #Plot results
 len_T = len(str(Tmax))  #the number of digits in Tmax
@@ -52,5 +53,4 @@ for time in range(Tmax):
 path = os.getcwd() + "\\GIF\\"
 files = [path + str(t).zfill(len_T) + '.png' for t in range(Tmax)]
 images = list(map(lambda file: Image.open(file), files))
-images.pop(0).save(path + "4_1A.gif" ,save_all = True, append_images = images, duration = 100, optimize = False, loop = 0)
-
+images.pop(0).save(path + "4_1C.gif" ,save_all = True, append_images = images, duration = 100, optimize = False, loop = 0)
