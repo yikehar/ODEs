@@ -25,7 +25,7 @@ import time
 import discreteLaplacian
 
 #init.
-Xmax, Tmax = 100, 250
+Xmax, Tmax = 100, 500
 dt, dx = 0.1, 1.
 d, k, a = 1., 0.1, 1.
 dx2 = dx*dx
