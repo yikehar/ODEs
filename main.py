@@ -1,4 +1,11 @@
-def func2(x):
-        return 2 * x
+import matplotlib.pyplot as plt
 import numpy as np
-print(func2(np.array([1, 2, 4])))
+
+A = np.array([[1, 2, 3], [1, 4, 9], [7, 8, 9]])
+print(A.shape)
+print(A[:,:2])
+fig, ax = plt.subplots()
+heatmap = ax.pcolor(A, cmap='YlOrRd')
+fig.colorbar(heatmap, ax=ax)
+plt.show()
+
