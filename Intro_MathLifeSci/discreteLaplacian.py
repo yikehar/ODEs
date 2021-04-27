@@ -39,18 +39,26 @@ def Lap2D(U, dx):
 
     return L / 4.
 
-#Calc. Laplacian using matrices
-def Lap2DMt(U, dx):
-    Xmax, Ymax = U.shape
-    L = np.zeros(U.shape)
+#Calc. 2D Laplacian using matrices
+def Lap2DMt(Et, dx2):
+    #dx2 = dx*dx
+    Ymax, Xmax = Et.shape
 
-    Et = U
-    Er = np.zeros(U.shape)
-    El = np.zeros(U.shape)
-    Eu = np.zeros(U.shape)
-    Ed = np.zeros(U.shape)
+    Er = np.zeros(Et.shape)
+    El = np.zeros(Et.shape)
+    Eu = np.zeros(Et.shape)
+    Ed = np.zeros(Et.shape)
 
-    Er[:, Ymax] = Et[:, Ymax]
-    Er[:, :Ymax - 1] = Et[:, 1:Ymax]
+    Er[:, Xmax - 1] = Et[:, Xmax - 1]
+    Er[:, :Xmax - 1] = Et[:, 1:]
+
     El[:, 0] = Et[:, 0]
-    El[:, 1:]
+    El[:, 1:] = Et[:, :Xmax - 1]
+
+    Ed[Ymax - 1, :] = Et[Ymax - 1, :]
+    Ed[:Ymax - 1, :] = Et[1:, :]
+
+    Eu[0, :] = Et[0, :]
+    Eu[1:, :] = Et[:Ymax - 1, :]
+
+    return (Er + El + Eu + Ed - 4. * Et) / dx2
