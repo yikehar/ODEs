@@ -32,6 +32,7 @@ E[40:60, 40:60, 0] = 1.0    #Initial conc. distribution
 
 starttime = time.time() #start timing
 
+#Solve PDE
 for T in range(Tmax - 1):
     E[:, :, T + 1] = 4. * dt * d * discreteLaplacian.Lap2D(E[:, :, T], dx) + E[:, :, T]
 

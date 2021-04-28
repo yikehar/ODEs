@@ -33,6 +33,7 @@ E[0:20, 40:60, 0] = np.random.randn(E[0:20, 40:60, 0].shape[0], E[0:20, 40:60, 0
 
 starttime = time.time() #start timing
 
+#Solve PDE
 for T in range(Tmax - 1):
     E[:, :, T + 1] = dt * d * discreteLaplacian.Lap2DMt(E[:, :, T], dx2) + E[:, :, T]
 

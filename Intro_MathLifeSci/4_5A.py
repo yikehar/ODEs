@@ -31,6 +31,7 @@ c[:, 47:53] = 0.5
 
 starttime = time.time() #start timing
 
+#Solve PDE
 for T in range(Tmax - 1):
     B[:, :, T + 1] = dt * (d * discreteLaplacian.Lap2DMt(B[:, :, T], dx2) - k * B[:, :, T] + c) + B[:, :, T]
 
