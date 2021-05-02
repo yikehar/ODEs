@@ -1,5 +1,5 @@
 """
-4.6A
+4.6B
 PDEs:
 d/dt B = d * (Laplacian) * B - k * B + cb
 d/dt W = d * (Laplacian) * B - k * W + cw
