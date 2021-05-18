@@ -50,12 +50,13 @@ plt.title("FitzHugh nullcline")
 padding = 0.2
 umax, umin = u_vec.max() + padding,  u_vec.min() - padding
 vmax, vmin = v_vec.max() + padding,  v_vec.min() - padding
-U, V = np.meshgrid(np.arange(umin, umax, 0.1), np.arange(umin, vmax, 0.1))
+U, V = np.meshgrid(np.arange(umin, umax, 0.1), np.arange(vmin, vmax, 0.1))
 dU = d_u(U, V)
 dV = d_v(U, V)
 plt.quiver(U, V, dU, dV)
 plt.contour(U, V, dV, levels=[0], colors="g")
 plt.contour(U, V, dU, levels=[0], colors="r")
+
 
 plt.xlim([umin, umax])
 plt.ylim([vmin, vmax])

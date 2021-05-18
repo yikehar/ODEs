@@ -224,7 +224,7 @@ for i in range(1,n):
     y[i] = z[1][1]
     #next initial condition
     z0 = z[1]
-print(t)
+
 # plot results
 plt.plot(t,u,'g:',label='u(t)')
 plt.plot(t,x,'b-',label='x(t)')

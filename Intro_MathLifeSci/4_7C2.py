@@ -7,7 +7,7 @@ d/dt A = da * (Laplacian) * A + aa * A + ia * I + c
 d/dt I = di * (Laplacian) * I + ai * A + ii * I
 (A and I have max and min values)
 
-Params'
+Params:
 A -- activating factor
 I -- inhibitory factor
 da, di -- diffusion coefficients (> 0)
@@ -44,7 +44,7 @@ starttime = time.time() #start timing
 
 #Solve PDEs
 for T in range(Tmax - 1):
-    A[:, :, T + 1] = dt * (da * discreteLaplacian.Lap2DMt(A[:, :, T], dx2) + aa * A[:, :, T] + ia * I[:, :, T]) + A[:, :, T] + c
+    A[:, :, T + 1] = dt * (da * discreteLaplacian.Lap2DMt(A[:, :, T], dx2) + aa * A[:, :, T] + ia * I[:, :, T] + c) + A[:, :, T]
     I[:, :, T + 1] = dt * (di * discreteLaplacian.Lap2DMt(I[:, :, T], dx2) + ai * A[:, :, T] + ii * I[:, :, T]) + I[:, :, T]
     #Apply maximum and minimum values
     A[:, :, T + 1] = A[:, :, T + 1] * ((A[:, :, T + 1] > 0.).astype(int) * (A[:, :, T + 1] < Amax).astype(int)) + Amax * (A[:, :, T + 1] >= Amax).astype(int)
