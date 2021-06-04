@@ -29,9 +29,9 @@ from scipy.integrate import odeint
 def vec_dt(A, E):
     #Constants
     de, ae, ke, ea = 1., 1., 1., 10.
+
     dx = 1.
-    dx2 = dx * dx
-    return ea * (1. - A) * E, de * discreteLaplacian.Lap2DMt(E, dx2) - ke * E + ae * A * (1. - A)
+    return ea * (1. - A) * E, de * discreteLaplacian.Lap2DMt(E, dx**2) - ke * E + ae * A * (1. - A)
 
 #Model
 def twovar_proneural(vec, t):

@@ -1,7 +1,7 @@
 """
-4.9B
+4.9C
 Proneural wave
-Four-variable model
+Four-variable model, EGF mutant
 A -- AS-C expression level, degree of differentiation
 E -- EGF signal
 D -- Delta expression level
@@ -53,11 +53,15 @@ def vec_dt(A, E, D, N):
     D_right[-1, :] = 0
     D_nei = D_upper + D_lower + D_left + D_right
 
+    #EGF mutant
+    Emut = np.ones(E.shape)
+    Emut[5:20, 5:20] = 0
+
     dx = 1. #val of dx = dy for calculation of laplacian
 
     # Calc. max{E - N, 0} by clip(min, max)
     return ea * (1. - A) * (E - N).clip(0, None), \
-           de * discreteLaplacian.Lap2DMt(E, dx**2) - ke * E + ae * A * (1. - A), \
+           de * discreteLaplacian.Lap2DMt(E, dx**2) - ke * E + ae * A * (1. - A) * Emut, \
            -kd * D + ad * A * (1. - A),\
            -kn * N + dn * D_nei - dc * D
             #dA/dt, dE/dt, dD/dt, dN/dt
@@ -137,4 +141,4 @@ for time in range(Ar.shape[2]):
 path = os.getcwd() + "\\GIF\\"
 files = [path + str(t).zfill(len_T) + '.png' for t in range(Ar.shape[2])]
 images = list(map(lambda file: Image.open(file), files))
-images.pop(0).save(path + "4_9B.gif" ,save_all = True, append_images = images, duration = 10, optimize = False, loop = 0)
+images.pop(0).save(path + "4_9C.gif" ,save_all = True, append_images = images, duration = 10, optimize = False, loop = 0)
